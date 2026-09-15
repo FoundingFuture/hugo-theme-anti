@@ -280,6 +280,8 @@ def settings_last(site):
         if len(toggles) != 1 or not toggles[0].within("nav"):
             yield f"{name}: no single settings item inside the menu"
             continue
+        if toggles[0].text.strip() != "Settings":
+            yield f"{name}: settings item reads {toggles[0].text.strip()!r}, expected 'Settings'"
         after = [a for a in nav_links(page) if a.index > toggles[0].index]
         if after:
             yield f"{name}: menu items follow settings: {[a.text.strip() for a in after]}"
