@@ -100,7 +100,8 @@ main:focus{outline:none;}
 .nav-body{position:relative;background:var(--bg-panel);border:1px solid var(--border);border-radius:0 0 6px 6px;padding:12px 18px;}
 .nav-prompt{color:var(--c2);}
 .nav-prompt .muted{color:var(--muted);}
-.nav-menu{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;}
+/* 4px between wrapped rows keeps them at one line pitch, 18px between items. */
+.nav-menu{display:flex;gap:4px 18px;flex-wrap:wrap;margin-top:8px;}
 .nav-menu a, .settings-toggle{color:var(--c2);padding:1px 8px;}
 .nav-menu a:hover, .nav-menu a.active, .settings-toggle:hover, .settings-toggle[aria-expanded="true"]{background:var(--c1);color:var(--on-active);box-shadow:0 0 12px rgba(var(--glow-rgb),0.9),0 0 24px rgba(var(--glow-rgb),0.5);}
 .nav-menu a.active, .settings-toggle[aria-expanded="true"]{box-shadow:none;}
