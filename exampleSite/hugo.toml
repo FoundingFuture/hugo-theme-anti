@@ -1,7 +1,7 @@
 baseURL = "https://example.com/"
-languageCode = "en-us"
+locale = "en-US"
 title = "anti"
-theme = "anti-terminal"
+theme = "hugo-theme-anti"
 
 [params]
   shortName = "anti"

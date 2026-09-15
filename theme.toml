@@ -1,10 +1,13 @@
-name = "anti-terminal"
+name = "anti"
 license = "MIT"
-description = "A retro CRT-terminal theme for the anti programming language site"
-homepage = ""
-tags = ["dark", "terminal", "retro", "documentation", "minimal"]
-features = ["dark-mode", "responsive"]
-min_version = "0.100.0"
+licenselink = "https://github.com/FoundingFuture/hugo-theme-anti/blob/main/LICENSE"
+description = "A retro CRT-terminal theme. Amber, green or light phosphor, scanlines, live noise grain and an occasional sync glitch, switched from a settings menu that remembers the reader's choice."
+homepage = "https://github.com/FoundingFuture/hugo-theme-anti"
+demosite = ""
+min_version = "0.158.0"
+tags = ["dark", "light", "terminal", "retro", "documentation", "minimal", "responsive", "accessibility"]
+features = ["dark-mode", "light-mode", "self-hosted fonts", "no third-party requests", "reduced motion", "rss", "opengraph"]
 
 [author]
-  name = "anti"
+  name = "Eddie Niese"
+  homepage = "https://foundingfuture.com/"

@@ -1,0 +1,6 @@
+# Theme configuration. Site configuration overrides these values.
+[module]
+  [module.hugoVersion]
+    extended = false
+    # locale and site.Language.Locale arrived in 0.158.0.
+    min = "0.158.0"
