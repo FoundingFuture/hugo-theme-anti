@@ -4,4 +4,4 @@
 {{ with .Description | default .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ "css/theme.css" | relURL }}">
+{{ with resources.Get "css/theme.css" }}<link rel="stylesheet" href="{{ .RelPermalink }}">{{ end }}

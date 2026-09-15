@@ -21,6 +21,6 @@
 
   {{ partial "footer.html" . }}
 
-  <script src="{{ "js/theme.js" | relURL }}"></script>
+  {{ with resources.Get "js/theme.js" }}<script src="{{ .RelPermalink }}"></script>{{ end }}
 </body>
 </html>
