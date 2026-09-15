@@ -85,9 +85,10 @@ main:focus{outline:none;}
 
 /* rail */
 .rail{position:sticky;top:0;z-index:10;background:var(--bg-page);border-bottom:1px solid var(--border);display:flex;justify-content:center;}
-.rail-inner{padding:20px 64px;display:flex;align-items:center;gap:24px;}
+.rail-inner{padding:8px 64px 20px;display:flex;align-items:center;gap:24px;}
 .logo, .logo:hover{color:var(--c1);}
-.logo{font-size:64px;font-weight:800;letter-spacing:-1px;text-shadow:0 0 6px rgba(var(--glow-rgb),0.55),0 0 14px rgba(var(--glow-rgb),0.3);white-space:nowrap;align-self:flex-start;}
+/* line-height:1 drops the empty line box above the letters. */
+.logo{font-size:64px;line-height:1;font-weight:800;letter-spacing:-1px;text-shadow:0 0 6px rgba(var(--glow-rgb),0.55),0 0 14px rgba(var(--glow-rgb),0.3);white-space:nowrap;align-self:flex-start;}
 .logo-block{display:flex;flex-direction:column;gap:4px;white-space:nowrap;}
 .stats{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted);}
 .stats-row{display:flex;gap:14px;}
@@ -120,7 +121,7 @@ main:focus{outline:none;}
 .settings-divider{display:block;height:1px;background:var(--border);margin:8px 0;}
 
 /* content */
-.content-wrap{padding:40px 64px;box-sizing:border-box;display:flex;justify-content:center;}
+.content-wrap{padding:20px 64px 40px;box-sizing:border-box;display:flex;justify-content:center;}
 .panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:32px 36px;color:var(--c2);font-size:15px;}
 .panel + .panel{margin-top:24px;}
 .panel-divider{height:1px;background:var(--border);margin:8px 0;}
@@ -205,10 +206,10 @@ main:focus{outline:none;}
 @media (max-width:720px){
   /* The stacked rail is about 360px tall, too much to keep on a phone screen. */
   .rail{position:static;}
-  .rail-inner{flex-direction:column;align-items:flex-start;padding:20px 24px;}
+  .rail-inner{flex-direction:column;align-items:flex-start;padding:8px 24px 20px;}
   /* Anchor the panel to the menu window, wherever the menu wraps settings. */
   .settings-anchor{position:static;}
-  .content-wrap{padding:24px;}
+  .content-wrap{padding:20px 24px 24px;}
   .footer-inner{padding:16px 24px 32px;}
   .panel{padding:24px 20px;}
   .logo{font-size:40px;}
