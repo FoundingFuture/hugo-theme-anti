@@ -2,15 +2,16 @@
 <header class="rail">
   <div class="wrap rail-inner">
 
-    <a href="{{ site.Home.RelPermalink }}" class="logo-block">
-      <span class="logo">{{ site.Params.logoText | default "!anti" }}</span>
-    </a>
-
-    <div class="stats" aria-hidden="true">
-      <div>{{ i18n "uptime" }} <span class="v" data-stat-uptime>00:00</span></div>
-      <div class="stats-row">
-        <div data-stat-cores-wrap hidden>{{ i18n "cores" }} <span class="v" data-stat-cores></span></div>
-        <div data-stat-mem-wrap hidden>{{ i18n "heap" }} <span class="v" data-stat-mem></span>MB</div>
+    {{- /* DESIGN: the stats sit under the logo, in whitespace the logo column
+           already has, so they take no width from the menu window. */}}
+    <div class="logo-block">
+      <a href="{{ site.Home.RelPermalink }}" class="logo">{{ site.Params.logoText | default "!anti" }}</a>
+      <div class="stats" aria-hidden="true">
+        <div>{{ i18n "uptime" }} <span class="v" data-stat-uptime>00:00</span></div>
+        <div class="stats-row">
+          <div data-stat-cores-wrap hidden>{{ i18n "cores" }} <span class="v" data-stat-cores></span></div>
+          <div data-stat-mem-wrap hidden>{{ i18n "heap" }} <span class="v" data-stat-mem></span>MB</div>
+        </div>
       </div>
     </div>
 

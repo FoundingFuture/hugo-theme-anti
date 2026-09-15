@@ -33,15 +33,22 @@ FOCUSABLE = {"a", "button", "input", "select", "textarea"}
 
 
 class Element:
-    def __init__(self, tag, attrs, ancestors, index):
+    def __init__(self, tag, attrs, parents, index):
         self.tag = tag
         self.attrs = {k: (v if v is not None else "") for k, v in attrs}
-        self.ancestors = ancestors
+        self.parents = parents
+        self.ancestors = tuple(p.tag for p in parents)
         self.index = index
         self.text = ""
 
     def within(self, tag):
         return tag in self.ancestors
+
+    def classes(self):
+        return self.attrs.get("class", "").split()
+
+    def parent_with_class(self, name):
+        return next((p for p in reversed(self.parents) if name in p.classes()), None)
 
 
 class Page(HTMLParser):
@@ -56,14 +63,14 @@ class Page(HTMLParser):
         self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
-        el = Element(tag, attrs, tuple(self._stack), len(self.elements))
+        el = Element(tag, attrs, tuple(self._open), len(self.elements))
         self.elements.append(el)
         if tag not in VOID:
             self._stack.append(tag)
             self._open.append(el)
 
     def handle_startendtag(self, tag, attrs):
-        self.elements.append(Element(tag, attrs, tuple(self._stack), len(self.elements)))
+        self.elements.append(Element(tag, attrs, tuple(self._open), len(self.elements)))
 
     def handle_endtag(self, tag):
         if tag in self._stack:
@@ -342,6 +349,24 @@ def settings_controls(site):
                 yield f"{name}: settings row has no aria-pressed"
 
 
+def stats_under_logo(site):
+    """Expect the live stats inside the logo block, after the logo link."""
+    for path, page in site:
+        name = rel_name(site, path)
+        logos = [el for el in page.elements if "logo" in el.classes()]
+        stats = [el for el in page.elements if "stats" in el.classes()]
+        if len(logos) != 1 or len(stats) != 1:
+            yield f"{name}: expected one logo and one stats block"
+            continue
+        logo_block, stats_block = logos[0].parent_with_class("logo-block"), stats[0].parent_with_class("logo-block")
+        if logo_block is None or logo_block is not stats_block:
+            yield f"{name}: stats are not in the same logo-block as the logo"
+        if stats[0].within("a"):
+            yield f"{name}: stats sit inside a link"
+        if stats[0].index < logos[0].index:
+            yield f"{name}: stats come before the logo"
+
+
 def skip_link(site):
     for path, page in site:
         name = rel_name(site, path)
@@ -450,6 +475,7 @@ def main():
         report.run(f"{label}: settings controls are buttons with state", settings_controls(site))
         report.run(f"{label}: settings is the last menu item", settings_last(site))
         report.run(f"{label}: skip link to main", skip_link(site))
+        report.run(f"{label}: stats sit under the logo", stats_under_logo(site))
         report.run(f"{label}: fonts served from the site", fonts_local(public, args.base))
         report.run(f"{label}: reduced motion honoured", reduced_motion(public))
         report.run(f"{label}: menu marks the current page and its directory", menu_current(site, public, args.base))
