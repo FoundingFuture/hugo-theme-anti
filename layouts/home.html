@@ -15,10 +15,10 @@
   <div class="prompt-line prompt-end" aria-hidden="true"><span class="muted">$</span> <span class="cursor"></span></div>
 </section>
 
-{{ range where site.RegularPages "Type" "in" (site.Params.homeSections | default (slice "page")) }}
+{{ range partialCached "func/sections.html" . site.Language.Lang }}
 <article class="panel card">
-  <h2 class="h3 panel-title">{{ .Title }}</h2>
-  <div class="body-copy">{{ .Summary }}</div>
+  <h2 class="h3 panel-title">{{ partial "func/section-label.html" . }}</h2>
+  {{ with .Summary }}<div class="body-copy">{{ . }}</div>{{ end }}
   <a class="read-more" href="{{ .RelPermalink }}">{{ i18n "readMore" }} →</a>
 </article>
 {{ end }}

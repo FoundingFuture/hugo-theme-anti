@@ -1,5 +1,6 @@
 +++
 title = "About"
+weight = 10
 +++
 
 anti is a small, C-rooted systems language. It keeps C's syntax and semantics where they already work, and adds one thing on top: structs that carry their own functions.

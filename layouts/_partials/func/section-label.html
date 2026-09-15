@@ -1,0 +1,4 @@
+{{- /* Return a directory's label: linkTitle, else title, from its _index.md.
+       A directory without _index.md shows its own name, where Hugo would
+       invent a capitalised title. */ -}}
+{{- return or .Params.linktitle .Params.title .Section -}}

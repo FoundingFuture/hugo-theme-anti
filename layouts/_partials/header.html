@@ -21,8 +21,12 @@
       <div class="nav-body">
         <div class="nav-prompt" aria-hidden="true"><span class="muted">~/{{ $short }} $</span> cat menu</div>
         <nav class="nav-menu" aria-label="{{ i18n "menu" }}">
-          {{- range site.Menus.main }}
-          <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} class="active" aria-current="page"{{ end }}>{{ .Name }}</a>
+          {{- /* One item per content directory. settings has no directory:
+                 it is the theme's own item and always comes last. */}}
+          {{- range partialCached "func/sections.html" . site.Language.Lang }}
+          {{- $current := "" }}
+          {{- if $.Eq . }}{{ $current = "page" }}{{ else if .IsAncestor $ }}{{ $current = "true" }}{{ end }}
+          <a href="{{ .RelPermalink }}"{{ with $current }} class="active" aria-current="{{ . }}"{{ end }}>{{ partial "func/section-label.html" . }}</a>
           {{- end }}
           <span class="settings-anchor">
             <button type="button" class="settings-toggle" data-settings-toggle aria-expanded="false" aria-controls="settings-panel">{{ i18n "settings" }}</button>

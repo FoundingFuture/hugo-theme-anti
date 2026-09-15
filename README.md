@@ -23,22 +23,16 @@ The folder under `themes/` has to be named `hugo-theme-anti`, because Hugo finds
 
 ## Site configuration
 
-### Lines only the site can write
+### Line only the site can write
 
-Hugo does not merge `markup` or `menus` from a theme's configuration, so the site's `hugo.toml` carries these. `exampleSite/hugo.toml` has both.
+Hugo does not merge `markup` from a theme's configuration, so the site's `hugo.toml` carries this. `exampleSite/hugo.toml` has it.
 
 ```toml
 [markup.highlight]
   noClasses = false
-
-[[menus.main]]
-  name = "about"
-  pageRef = "/about"
-  weight = 10
 ```
 
-- `noClasses = false` makes Chroma write token classes. The stylesheet colours those classes from the active phosphor mode. With Hugo's default, Chroma writes fixed inline colours instead.
-- `pageRef` ties a menu entry to a page. The menu marks the current page with `aria-current="page"` only for entries that use `pageRef`. An entry with `url` is never marked.
+`noClasses = false` makes Chroma write token classes. The stylesheet colours those classes from the active phosphor mode. With Hugo's default, Chroma writes fixed inline colours instead.
 
 ### Parameters
 
@@ -52,11 +46,27 @@ All parameters sit under `[params]`.
 | `subtitle` | none | Line under the tagline |
 | `description` | none | Meta description for pages without their own description or summary |
 | `footerText` | `copyright`, then `© <year> <title>` | Footer line |
-| `homeSections` | `["page"]` | Page types that get a card on the home page |
+
+## Menu and home page
+
+The menu lists the top-level directories under `content/`, followed by `settings`. `settings` belongs to the theme and has no directory. The home page renders `content/_index.md` under the tagline, then one card per directory in the same order as the menu.
+
+- Order: directories whose `_index.md` sets `weight` come first, by weight. The rest follow by directory name, which also breaks ties between equal weights.
+- Label: `linkTitle` from the directory's `_index.md`, else its `title`. A directory without `_index.md` shows its own name.
+- Card: the label, the summary of `_index.md` when it has content, and a link to the directory.
+- Marking: the directory's own page gets `aria-current="page"` on its item. Every page inside the directory gets `aria-current="true"` on the same item.
+- `[[menus.main]]` in the site configuration is not read.
+
+```toml
++++
+title = "Documentation"
+linkTitle = "docs"
+weight = 20
++++
+```
 
 ## Content
 
-- The home page renders `content/_index.md` under the tagline. A card follows for every regular page whose type is listed in `homeSections`.
 - A Markdown link such as `[build](/build/)` resolves to the page. When the site is served from a subpath, the link gets that subpath.
 - Every page carries a canonical link, OpenGraph and Twitter card tags, and the RSS link where the page has a feed.
 
@@ -77,20 +87,22 @@ When the system asks for reduced motion, the noise stops flickering, the cursor 
 ```sh
 ./c          # serve exampleSite at http://localhost:1313/ with live reload
 ./c build    # write the example site to dist/example-site/
-./c check    # build the example site and a bare site, then run tools/check.py
+./c check    # build the example site, a bare site and the fixtures, then run tools/check.py
 ```
 
-`./c check` builds both sites under the base path `/sub/`, with every Hugo warning treated as an error. `tools/check.py` then reads the output and prints PASS or FAIL for each check.
+`./c check` builds every site under the base path `/sub/`, with every Hugo warning treated as an error. `tools/check.py` then reads the output and prints PASS or FAIL for each check.
 
 ## Structure
 
 | Path | Contents |
 |---|---|
 | `layouts/baseof.html` | Page shell, the reader settings and their defaults, overlays, script tag |
-| `layouts/home.html` | Tagline, home page content, one card per page |
+| `layouts/home.html` | Tagline, home page content, one card per directory |
 | `layouts/single.html`, `layouts/list.html` | Regular pages, and sections and taxonomies |
 | `layouts/_partials/head.html` | Settings script, meta tags, feed and canonical links, font preload, stylesheet |
-| `layouts/_partials/header.html` | Logo, live stats, menu window, settings panel |
+| `layouts/_partials/header.html` | Logo, live stats, menu of directories, settings panel |
+| `layouts/_partials/func/sections.html` | Top-level directories in menu order |
+| `layouts/_partials/func/section-label.html` | A directory's menu and card label |
 | `layouts/_partials/footer.html` | Footer line |
 | `layouts/_partials/func/font-url.html` | Fingerprinted font URL for the preload and `@font-face` |
 | `layouts/_markup/render-link.html` | Resolves Markdown links to pages and resources |
@@ -100,6 +112,7 @@ When the system asks for reduced motion, the noise stops flickering, the cursor 
 | `static/favicon.svg`, `static/fonts/OFL.txt` | Icon, font licence |
 | `i18n/en.toml` | Words the templates print |
 | `c`, `tools/check.py` | Serve, build and check the example site |
+| `tools/fixtures/sections/` | Content whose menu order and labels `tools/check.py` asserts |
 
 ## Fonts
 

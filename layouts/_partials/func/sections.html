@@ -1,0 +1,13 @@
+{{- /* Return the top-level content directories in menu order. The header
+       menu and the home cards both read this, so the order has one
+       definition. Weighted directories come first by weight, ties and the
+       rest by directory name. sort is stable, so sorting by name and then
+       by weight keeps name order within a weight. */ -}}
+{{- $weighted := where site.Sections "Weight" "!=" 0 -}}
+{{- $unweighted := where site.Sections "Weight" 0 -}}
+{{- $weighted = sort (sort $weighted "Section") "Weight" -}}
+{{- $unweighted = sort $unweighted "Section" -}}
+{{- $ordered := slice -}}
+{{- range $weighted }}{{ $ordered = $ordered | append . }}{{ end -}}
+{{- range $unweighted }}{{ $ordered = $ordered | append . }}{{ end -}}
+{{- return $ordered -}}

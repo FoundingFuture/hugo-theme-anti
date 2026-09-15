@@ -13,6 +13,18 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 
+# The menu tools/fixtures/sections must produce, as (directory, label) pairs.
+# Weighted directories come first by weight, ties and the rest by directory
+# name. The label is linkTitle, else title, else the directory name.
+SECTIONS_MENU = [
+    ("zeta", "Alpha"),
+    ("alpha", "Zulu link"),
+    ("mid", "Mid"),
+    ("bravo", "bravo"),
+    ("charlie", "Charlie Title"),
+    ("delta", "Aardvark"),
+]
+
 VOID = {
     "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
     "meta", "source", "track", "wbr",
@@ -204,24 +216,83 @@ def links_resolve(site, public, base):
                 yield f"{name}: <{el.tag} {attr}={raw!r}> does not resolve under {urlsplit(base).path}"
 
 
+def nav_links(page):
+    return [el for el in page.elements if el.tag == "a" and el.within("nav")]
+
+
+def link_path(public, base, path, el):
+    return urlsplit(urljoin(page_url(public, base, path), el.attrs.get("href", ""))).path
+
+
 def menu_current(site, public, base):
+    """Expect aria-current=page on the page's own item, true on its directory."""
     for path, page in site:
         name = rel_name(site, path)
         here = urlsplit(page_url(public, base, path)).path
-        navs = page.all("nav")
-        if not navs:
+        if not page.all("nav"):
             yield f"{name}: no nav element"
             continue
-        links = [el for el in page.elements if el.tag == "a" and el.within("nav")]
-        if not links:
-            yield f"{name}: nav holds no links"
-        for a in links:
-            target = urlsplit(urljoin(page_url(public, base, path), a.attrs.get("href", ""))).path
-            current = a.attrs.get("aria-current") == "page"
-            if target == here and not current:
-                yield f"{name}: menu link to this page has no aria-current=page"
-            if current and target != here:
-                yield f"{name}: aria-current=page on a link to {target}"
+        for a in nav_links(page):
+            target = link_path(public, base, path, a)
+            want = "page" if target == here else "true" if here.startswith(target) else None
+            got = a.attrs.get("aria-current")
+            if got != want:
+                yield f"{name}: item {target} has aria-current={got!r}, expected {want!r}"
+            if (want is not None) != ("active" in a.attrs.get("class", "").split()):
+                yield f"{name}: item {target} class active disagrees with aria-current"
+
+
+def menu_items(site, public, base):
+    """Return the menu of the home page as (directory, label) pairs."""
+    home = next(page for path, page in site if path == public / "index.html")
+    base_path = urlsplit(base).path
+    return [
+        (link_path(public, base, public / "index.html", a)[len(base_path):].strip("/"), a.text.strip())
+        for a in nav_links(home)
+    ]
+
+
+def menu_is(site, public, base, expected):
+    for path, page in site:
+        base_path = urlsplit(base).path
+        got = [(link_path(public, base, path, a)[len(base_path):].strip("/"), a.text.strip()) for a in nav_links(page)]
+        if got != expected:
+            yield f"{rel_name(site, path)}: menu is {got}, expected {expected}"
+
+
+def menu_has_items(site):
+    for path, page in site:
+        if not nav_links(page):
+            yield f"{rel_name(site, path)}: menu holds no items"
+
+
+def settings_last(site):
+    for path, page in site:
+        name = rel_name(site, path)
+        toggles = [el for el in page.elements if "data-settings-toggle" in el.attrs]
+        if len(toggles) != 1 or not toggles[0].within("nav"):
+            yield f"{name}: no single settings item inside the menu"
+            continue
+        after = [a for a in nav_links(page) if a.index > toggles[0].index]
+        if after:
+            yield f"{name}: menu items follow settings: {[a.text.strip() for a in after]}"
+
+
+def home_cards(site, public, base, expected):
+    """Expect one card per menu item on the home page, in menu order."""
+    home = next(page for path, page in site if path == public / "index.html")
+    base_path = urlsplit(base).path
+    cards = []
+    for el in home.elements:
+        if el.tag == "article" and "card" in el.attrs.get("class", "").split():
+            cards.append({"label": None, "dir": None})
+        elif cards and el.within("article") and el.tag == "h2" and cards[-1]["label"] is None:
+            cards[-1]["label"] = el.text.strip()
+        elif cards and el.within("article") and el.tag == "a" and "read-more" in el.attrs.get("class", ""):
+            cards[-1]["dir"] = link_path(public, base, public / "index.html", el)[len(base_path):].strip("/")
+    got = [(c["dir"], c["label"]) for c in cards]
+    if got != expected:
+        yield f"home cards are {got}, expected {expected}"
 
 
 def assets_fingerprinted(site):
@@ -358,30 +429,39 @@ def main():
     ap.add_argument("--base", required=True)
     ap.add_argument("--example", type=Path, required=True)
     ap.add_argument("--bare", type=Path, required=True)
+    ap.add_argument("--sections", type=Path, required=True)
     args = ap.parse_args()
 
     report = Report()
     report.run("repo: theme name and Hugo version agree", name_seams(args.repo, args.name))
 
-    for label, public, full in (("example", args.example, True), ("bare", args.bare, False)):
+    sites = (("example", args.example), ("bare", args.bare), ("sections", args.sections))
+    for label, public in sites:
         site = Site(public)
         report.run(f"{label}: one h1 per page", one_h1(site))
         report.run(f"{label}: ids are non-empty and unique", ids_valid(site))
         report.run(f"{label}: no style attributes", no_inline_style(site))
         report.run(f"{label}: html lang", html_lang(site))
-        report.run(f"{label}: head carries canonical, icon, og:title", head_links(site, want_description=full))
+        report.run(f"{label}: head carries canonical, icon, og:title", head_links(site, want_description=label == "example"))
         report.run(f"{label}: home page links its RSS feed", home_feed(public, args.base))
         report.run(f"{label}: links and assets resolve under the base path", links_resolve(site, public, args.base))
         report.run(f"{label}: assets fingerprinted with integrity", assets_fingerprinted(site))
         report.run(f"{label}: saved mode applied before the stylesheet", mode_before_paint(site))
         report.run(f"{label}: settings controls are buttons with state", settings_controls(site))
+        report.run(f"{label}: settings is the last menu item", settings_last(site))
         report.run(f"{label}: skip link to main", skip_link(site))
         report.run(f"{label}: fonts served from the site", fonts_local(public, args.base))
         report.run(f"{label}: reduced motion honoured", reduced_motion(public))
-        if full:
-            report.run(f"{label}: menu marks the current page", menu_current(site, public, args.base))
-        else:
+        report.run(f"{label}: menu marks the current page and its directory", menu_current(site, public, args.base))
+        if label == "example":
+            report.run(f"{label}: menu has items", menu_has_items(site))
+            report.run(f"{label}: home cards follow the menu", home_cards(site, public, args.base, menu_items(site, public, args.base)))
+        if label == "bare":
             report.run(f"{label}: no example-site copy in the theme", no_site_copy(public))
+            report.run(f"{label}: menu holds only settings", menu_is(site, public, args.base, []))
+        if label == "sections":
+            report.run(f"{label}: menu lists directories by weight, then name", menu_is(site, public, args.base, SECTIONS_MENU))
+            report.run(f"{label}: home cards follow the menu", home_cards(site, public, args.base, SECTIONS_MENU))
 
     return 1 if report.failed else 0
 

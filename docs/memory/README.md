@@ -6,4 +6,4 @@ Name each file after its topic, in kebab-case, with a `.md` extension.
 
 ## Entries
 
-- [Theme decisions](theme-decisions.md): the name, the Hugo floor, the self-hosted font, what only a site can configure, and what no automated check covers.
+- [Theme decisions](theme-decisions.md): name, Hugo floor, font, menu from content directories, site-only configuration, and hand checks.

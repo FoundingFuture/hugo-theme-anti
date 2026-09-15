@@ -6,7 +6,7 @@
 #   ./c            same as ./c serve
 #   ./c serve      hugo server on exampleSite with live reload, http://localhost:1313/
 #   ./c build      static example site in dist/example-site/
-#   ./c check      build the example site and a bare site, then run tools/check.py on both
+#   ./c check      build the example site, a bare site and tools/fixtures/, then run tools/check.py
 #
 # Hugo finds a theme by its folder name, and a clone can sit in a folder with
 # any name. Link the checkout into a temporary themes directory under the name
@@ -56,8 +56,11 @@ case "$verb" in
     hugo -s "$tmp/bare" --themesDir "$tmp/themes" --theme "$NAME" \
       -d "$tmp/bare-public" --baseURL "$CHECK_BASE" --cacheDir "$tmp/cache" "${strict[@]}" "$@"
 
+    hugo -s "$ROOT/tools/fixtures/sections" --themesDir "$tmp/themes" --theme "$NAME" \
+      -d "$tmp/sections" --baseURL "$CHECK_BASE" --cacheDir "$tmp/cache" "${strict[@]}" "$@"
+
     python3 tools/check.py --repo "$ROOT" --name "$NAME" --base "$CHECK_BASE" \
-      --example "$tmp/example" --bare "$tmp/bare-public"
+      --example "$tmp/example" --bare "$tmp/bare-public" --sections "$tmp/sections"
     ;;
   *)
     echo "usage: ./c [serve|build|check] [hugo options]"

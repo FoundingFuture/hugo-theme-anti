@@ -26,9 +26,17 @@ f.flavor = "woff2"
 f.save("jetbrains-mono.woff2")
 ```
 
-## Only the site can configure these
+## Configuration only the site can write
 
-Hugo ignores `markup` and `menus` in a theme's `hugo.toml`. The README tells a site to write `markup.highlight.noClasses = false`, and to give menu entries a `pageRef`. The example site does both.
+Hugo ignores `markup` in a theme's `hugo.toml`. The README tells a site to write `markup.highlight.noClasses = false`, and the example site does.
+
+## Menu from content directories
+
+The owner decided the menu comes from the top-level content directories, not from `[[menus.main]]`, which the theme does not read. `settings` is theme configuration with no directory, so the theme always renders it last.
+
+- The label is `linkTitle`, else `title`, else the directory name. Without the last fallback Hugo invents a title, such as "Bravoes" for a directory named `bravo`.
+- Order is weight first, then directory name. `func/sections.html` relies on `sort` being stable to break weight ties by name. The `alpha` and `mid` directories in `tools/fixtures/sections/` fail the check if it is not.
+- The home cards read the same partial, so the menu and the cards cannot disagree.
 
 ## Phone layout
 

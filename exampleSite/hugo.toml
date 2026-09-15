@@ -10,39 +10,8 @@ theme = "hugo-theme-anti"
   subtitle = "C-rooted syntax, plus struct types that carry their own functions"
   description = "anti is a small, C-rooted systems language compiled by antic."
   footerText = "© 2026 anti-lang — built with Hugo + hugo-theme-anti"
-  homeSections = ["page"]
 
 # A theme cannot set markup, so the site writes this line itself.
 # Without it Chroma writes inline colours that ignore the phosphor mode.
 [markup.highlight]
   noClasses = false
-
-[[menus.main]]
-  name = "about"
-  pageRef = "/about"
-  weight = 10
-
-[[menus.main]]
-  name = "documentation"
-  pageRef = "/documentation"
-  weight = 20
-
-[[menus.main]]
-  name = "download"
-  pageRef = "/download"
-  weight = 30
-
-[[menus.main]]
-  name = "build"
-  pageRef = "/build"
-  weight = 40
-
-[[menus.main]]
-  name = "code"
-  pageRef = "/code"
-  weight = 50
-
-[[menus.main]]
-  name = "repositories"
-  pageRef = "/repositories"
-  weight = 60

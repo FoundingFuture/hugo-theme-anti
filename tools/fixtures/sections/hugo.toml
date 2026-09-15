@@ -1,0 +1,5 @@
+# Fixture for the menu and home cards built from content directories.
+# tools/check.py holds the order and labels this content must produce.
+baseURL = "https://example.org/"
+locale = "en-US"
+title = "Sections fixture"
