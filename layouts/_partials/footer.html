@@ -1,4 +1,6 @@
-<div class="wrap" style="padding:24px 64px 48px;box-sizing:border-box;color:var(--muted);font-size:13px;">
-  <div class="panel-divider" style="margin-bottom:16px;"></div>
-  {{ .Site.Params.footerText | default (printf "© %s %s" (now.Format "2006") .Site.Title) }}
-</div>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="panel-divider"></div>
+    {{ with or site.Params.footerText site.Copyright }}{{ . }}{{ else }}© {{ now.Format "2006" }} {{ site.Title }}{{ end }}
+  </div>
+</footer>

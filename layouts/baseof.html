@@ -1,23 +1,32 @@
+{{- /* The reader's settings and their defaults. head.html restores saved
+       values into these attributes before first paint, theme.js changes
+       them, and theme.css reads them. */ -}}
+{{- $settings := dict "mode" "amber" "scanlines" "on" "noise" "on" "sync" "on" -}}
+{{- $names := slice }}{{ range $name, $_ := $settings }}{{ $names = $names | append $name }}{{ end -}}
 <!DOCTYPE html>
-<html lang="{{ .Site.LanguageCode | default "en" }}" data-mode="amber">
+<html lang="{{ site.Language.Locale }}" data-settings-key="hugo-theme-anti-settings" data-settings="{{ delimit $names " " }}"
+  {{- range $name, $value := $settings }} data-{{ $name }}="{{ $value }}"{{ end }}>
 <head>
   {{ partial "head.html" . }}
 </head>
 <body>
+  <a class="skip-link" href="#main">{{ i18n "skipToContent" }}</a>
 
-  <div class="scanlines-overlay"></div>
-  <div class="noise-layer" data-noise></div>
-  <div class="noise-layer" data-noise></div>
-  <div class="noise-layer" data-noise></div>
-  <div class="noise-layer" data-noise></div>
+  <div class="scanlines-overlay" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true">
+    <div class="noise-layer" data-noise-tile></div>
+    <div class="noise-layer" data-noise-tile></div>
+    <div class="noise-layer" data-noise-tile></div>
+    <div class="noise-layer" data-noise-tile></div>
+  </div>
 
   {{ partial "header.html" . }}
 
-  <div class="content-wrap">
+  <main id="main" class="content-wrap" tabindex="-1">
     <div class="wrap">
       {{ block "main" . }}{{ end }}
     </div>
-  </div>
+  </main>
 
   {{ partial "footer.html" . }}
 

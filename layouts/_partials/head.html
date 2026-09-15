@@ -1,7 +1,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
-{{ with .Description | default .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
+{{- /* DESIGN: apply the saved settings before the stylesheet, so a reader
+       who chose green or light never sees an amber first paint. Only
+       names listed in data-settings on <html> are read back. */}}
+<script>
+(function () {
+  var root = document.documentElement;
+  root.setAttribute("data-js", "");
+  try {
+    var saved = JSON.parse(localStorage.getItem(root.getAttribute("data-settings-key")) || "{}");
+    root.getAttribute("data-settings").split(" ").forEach(function (name) {
+      if (typeof saved[name] === "string" && /^[a-z]+$/.test(saved[name])) {
+        root.setAttribute("data-" + name, saved[name]);
+      }
+    });
+  } catch (e) {}
+})();
+</script>
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} — {{ site.Title }}{{ end }}</title>
+{{- with or .Description .Summary site.Params.description }}
+<meta name="description" content="{{ . | plainify | htmlUnescape | truncate 160 }}">
+{{- end }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{- range .AlternativeOutputFormats }}
+<link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .RelPermalink }}" title="{{ site.Title }}">
+{{- end }}
+{{- /* A site replaces the icon by putting its own favicon.svg in static/. */}}
+<link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
 {{- /* Preload the font: the browser finds it only after parsing the CSS
        otherwise. crossorigin is required even on the same origin, or the
        preload is not reused and the file downloads twice. */}}
@@ -12,3 +37,5 @@
        headers, so an unfingerprinted file can be served stale. */}}
 {{- $css = $css | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
+{{ template "_internal/opengraph.html" . }}
+{{ template "_internal/twitter_cards.html" . }}

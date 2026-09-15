@@ -1,48 +1,49 @@
-<div class="rail">
+{{- $short := site.Params.shortName | default "anti" }}
+<header class="rail">
   <div class="wrap rail-inner">
 
-    <a href="{{ "/" | relURL }}" class="logo-block" style="text-decoration:none;">
-      <span class="logo">{{ .Site.Params.logoText | default "!anti" }}</span>
+    <a href="{{ site.Home.RelPermalink }}" class="logo-block">
+      <span class="logo">{{ site.Params.logoText | default "!anti" }}</span>
     </a>
 
-    <div class="stats">
-      <div>uptime <span class="v" data-stat-uptime>00:00</span></div>
+    <div class="stats" aria-hidden="true">
+      <div>{{ i18n "uptime" }} <span class="v" data-stat-uptime>00:00</span></div>
       <div class="stats-row">
-        <div data-stat-cores-wrap style="display:none;">cores <span class="v" data-stat-cores></span></div>
-        <div data-stat-mem-wrap style="display:none;">heap <span class="v" data-stat-mem></span>MB</div>
+        <div data-stat-cores-wrap hidden>{{ i18n "cores" }} <span class="v" data-stat-cores></span></div>
+        <div data-stat-mem-wrap hidden>{{ i18n "heap" }} <span class="v" data-stat-mem></span>MB</div>
       </div>
     </div>
 
     <div class="nav-window">
-      <div class="nav-chrome">
-        <div class="nav-dot"></div><div class="nav-dot"></div><div class="nav-dot"></div>
+      <div class="nav-chrome" aria-hidden="true">
+        <span class="nav-dot"></span><span class="nav-dot"></span><span class="nav-dot"></span>
       </div>
       <div class="nav-body">
-        <div class="nav-prompt"><span class="muted">~/{{ .Site.Params.shortName | default "anti" }} $</span> cat menu</div>
-        <div class="nav-menu">
-          {{ range .Site.Menus.main }}
-            <a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "main" . }} class="active"{{ end }}>{{ .Name }}</a>
-          {{ end }}
+        <div class="nav-prompt" aria-hidden="true"><span class="muted">~/{{ $short }} $</span> cat menu</div>
+        <nav class="nav-menu" aria-label="{{ i18n "menu" }}">
+          {{- range site.Menus.main }}
+          <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} class="active" aria-current="page"{{ end }}>{{ .Name }}</a>
+          {{- end }}
           <span class="settings-anchor">
-            <a href="#" data-settings-toggle>settings</a>
-            <div class="settings-panel" data-settings-panel>
-              <div class="settings-head">
-                <span class="muted">~/{{ .Site.Params.shortName | default "anti" }} $ set</span>
-                <span data-settings-close style="cursor:pointer;">[x]</span>
-              </div>
-              <div class="settings-row" data-toggle="scanlines">[<span class="mark" data-mark="scanlines">x</span>] scanlines</div>
-              <div class="settings-row" data-toggle="noise">[<span class="mark" data-mark="noise">x</span>] noise</div>
-              <div class="settings-row" data-toggle="sync">[<span class="mark" data-mark="sync">x</span>] sync</div>
-              <div class="settings-divider"></div>
-              <div class="muted">mode</div>
-              <div class="settings-row" data-set-mode="amber">(<span class="mark" data-mark="mode-amber">*</span>) amber</div>
-              <div class="settings-row" data-set-mode="green">(<span class="mark" data-mark="mode-green">*</span>) green</div>
-              <div class="settings-row" data-set-mode="light">(<span class="mark" data-mark="mode-light">*</span>) light</div>
-            </div>
+            <button type="button" class="settings-toggle" data-settings-toggle aria-expanded="false" aria-controls="settings-panel">{{ i18n "settings" }}</button>
+            <span class="settings-panel" id="settings-panel" data-settings-panel hidden>
+              <span class="settings-head">
+                <span class="muted" aria-hidden="true">~/{{ $short }} $ set</span>
+                <button type="button" class="settings-close" data-settings-close aria-label="{{ i18n "close" }}">[x]</button>
+              </span>
+              {{- range slice "scanlines" "noise" "sync" }}
+              <button type="button" class="settings-row" data-toggle="{{ . }}" aria-pressed="true">[<span class="mark" aria-hidden="true">x</span>] {{ i18n . }}</button>
+              {{- end }}
+              <span class="settings-divider"></span>
+              <span class="muted">{{ i18n "mode" }}</span>
+              {{- range slice "amber" "green" "light" }}
+              <button type="button" class="settings-row" data-set-mode="{{ . }}" aria-pressed="false">(<span class="mark" aria-hidden="true">*</span>) {{ i18n . }}</button>
+              {{- end }}
+            </span>
           </span>
-        </div>
+        </nav>
       </div>
     </div>
 
   </div>
-</div>
+</header>

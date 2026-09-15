@@ -1,8 +1,8 @@
 {{ define "main" }}
 
-<div id="{{ .Slug }}" class="panel">
-  <div class="h3" style="margin-bottom:16px;">{{ .Title }}</div>
+<article class="panel">
+  <h1 class="h3 panel-title">{{ .Title }}</h1>
   <div class="body-copy">{{ .Content }}</div>
-</div>
+</article>
 
 {{ end }}

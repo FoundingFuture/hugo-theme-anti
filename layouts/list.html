@@ -1,15 +1,17 @@
 {{ define "main" }}
 
-<div class="panel">
-  <div class="h3" style="margin-bottom:16px;">{{ .Title }}</div>
-  {{ with .Content }}<div class="body-copy" style="margin-bottom:20px;">{{ . }}</div>{{ end }}
+<section class="panel">
+  <h1 class="h3 panel-title">{{ .Title }}</h1>
+  {{ with .Content }}<div class="body-copy list-intro">{{ . }}</div>{{ end }}
 
-  <div class="prompt-line" style="margin-bottom:10px;"><span class="muted">$</span> ls {{ .Title | urlize }}</div>
-  <div style="display:flex;flex-direction:column;gap:6px;color:var(--c2);font-size:16px;">
-    {{ range .Pages }}
-      <div>drwxr-xr-x&nbsp;&nbsp;<a href="{{ .RelPermalink }}">{{ .Title }}</a></div>
+  <div class="prompt-line list-prompt" aria-hidden="true"><span class="muted">$</span> ls {{ .Title | urlize }}</div>
+  {{ with .Pages }}
+  <ul class="ls">
+    {{ range . }}
+    <li><span class="ls-mode" aria-hidden="true">{{ if .IsNode }}drwxr-xr-x{{ else }}-rw-r--r--{{ end }}</span><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
     {{ end }}
-  </div>
-</div>
+  </ul>
+  {{ end }}
+</section>
 
 {{ end }}

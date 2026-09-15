@@ -1,0 +1,20 @@
+{{- /* Resolve a link to a page or resource by path, so [x](/build/) keeps
+       working when the site is served from a subpath. A theme hook
+       replaces Hugo's own, so the resolving has to happen here. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $href := .Destination -}}
+{{- if and (not $u.IsAbs) $u.Path -}}
+  {{- with or (.PageInner.GetPage $u.Path) (.PageInner.Resources.Get $u.Path) -}}
+    {{- $href = .RelPermalink -}}
+  {{- else -}}
+    {{- if hasPrefix $u.Path "/" -}}
+      {{- $href = strings.TrimPrefix "/" $u.Path | relURL -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if ne $href .Destination -}}
+    {{- with $u.RawQuery }}{{ $href = printf "%s?%s" $href . }}{{ end -}}
+    {{- with $u.Fragment }}{{ $href = printf "%s#%s" $href . }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $href | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- /* chomp trailing newline */ -}}
