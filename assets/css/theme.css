@@ -1,4 +1,14 @@
-/* ===== anti-terminal Hugo theme ===== */
+/* ===== hugo-theme-anti ===== */
+/* Runs through resources.ExecuteAsTemplate, so the font URL comes from
+   the same partial head.html preloads. */
+
+@font-face{
+  font-family:'JetBrains Mono';
+  src:url("{{ partial "func/font-url.html" . }}") format("woff2");
+  font-weight:100 800;
+  font-style:normal;
+  font-display:swap;
+}
 
 :root{
   --c1:#ffb000; --c2:#c98700; --c3:#e0a340; --c4:#8a6a2a; --c5:#a37728; --c7:#d4941f;

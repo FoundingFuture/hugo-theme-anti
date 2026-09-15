@@ -2,6 +2,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ .Title }} — {{ .Site.Title }}{{ end }}</title>
 {{ with .Description | default .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-{{ with resources.Get "css/theme.css" }}<link rel="stylesheet" href="{{ .RelPermalink }}">{{ end }}
+{{- /* Preload the font: the browser finds it only after parsing the CSS
+       otherwise. crossorigin is required even on the same origin, or the
+       preload is not reused and the file downloads twice. */}}
+<link rel="preload" as="font" type="font/woff2" href="{{ partial "func/font-url.html" . }}" crossorigin>
+{{- $css := resources.Get "css/theme.css" | resources.ExecuteAsTemplate "css/theme.css" . }}
+{{- if hugo.IsProduction }}{{ $css = $css | minify }}{{ end }}
+{{- /* Fingerprint in every environment: the dev server sends no cache
+       headers, so an unfingerprinted file can be served stale. */}}
+{{- $css = $css | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">

@@ -21,6 +21,9 @@
 
   {{ partial "footer.html" . }}
 
-  {{ with resources.Get "js/theme.js" }}<script src="{{ .RelPermalink }}"></script>{{ end }}
+  {{- $js := resources.Get "js/theme.js" }}
+  {{- if hugo.IsProduction }}{{ $js = $js | minify }}{{ end }}
+  {{- $js = $js | fingerprint }}
+  <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
 </body>
 </html>

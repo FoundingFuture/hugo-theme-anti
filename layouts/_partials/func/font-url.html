@@ -1,0 +1,3 @@
+{{- /* Publish the theme font once, fingerprinted, and return its URL.
+       head.html preloads it and theme.css names it in @font-face. */ -}}
+{{- return (resources.Get "fonts/jetbrains-mono.woff2" | fingerprint).RelPermalink -}}

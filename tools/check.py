@@ -286,7 +286,7 @@ def css_files(public):
     return sorted(public.rglob("*.css"))
 
 
-def fonts_local(public):
+def fonts_local(public, base):
     sheets = css_files(public)
     if not sheets:
         yield "no stylesheet in the build"
@@ -295,11 +295,11 @@ def fonts_local(public):
         text = css.read_text(encoding="utf-8")
         if re.search(r"@import|url\(\s*['\"]?(https?:)?//", text):
             yield f"{css.name}: loads from another host"
+        css_url = urljoin(base, css.relative_to(public).as_posix())
         for block in re.findall(r"@font-face\s*\{[^}]*\}", text):
             faces += 1
             for url in re.findall(r"url\(\s*['\"]?([^'\")]+)", block):
-                target = (css.parent / url.split("#")[0].split("?")[0]).resolve()
-                if not target.is_file():
+                if resolve(public, base, urljoin(css_url, url)) is None:
                     yield f"{css.name}: font {url} is not in the build"
     if sheets and faces == 0:
         yield "no @font-face in the stylesheet"
@@ -376,7 +376,7 @@ def main():
         report.run(f"{label}: saved mode applied before the stylesheet", mode_before_paint(site))
         report.run(f"{label}: settings controls are buttons with state", settings_controls(site))
         report.run(f"{label}: skip link to main", skip_link(site))
-        report.run(f"{label}: fonts served from the site", fonts_local(public))
+        report.run(f"{label}: fonts served from the site", fonts_local(public, args.base))
         report.run(f"{label}: reduced motion honoured", reduced_motion(public))
         if full:
             report.run(f"{label}: menu marks the current page", menu_current(site, public, args.base))
