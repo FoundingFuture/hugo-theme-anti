@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode | default "en" }}" data-mode="amber">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body>
+
+  <div class="scanlines-overlay"></div>
+  <div class="noise-layer" data-noise></div>
+  <div class="noise-layer" data-noise></div>
+  <div class="noise-layer" data-noise></div>
+  <div class="noise-layer" data-noise></div>
+
+  {{ partial "header.html" . }}
+
+  <div class="content-wrap">
+    <div class="wrap">
+      {{ block "main" . }}{{ end }}
+    </div>
+  </div>
+
+  {{ partial "footer.html" . }}
+
+  <script src="{{ "js/theme.js" | relURL }}"></script>
+</body>
+</html>

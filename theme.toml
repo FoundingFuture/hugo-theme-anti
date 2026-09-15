@@ -1,0 +1,10 @@
+name = "anti-terminal"
+license = "MIT"
+description = "A retro CRT-terminal theme for the anti programming language site"
+homepage = ""
+tags = ["dark", "terminal", "retro", "documentation", "minimal"]
+features = ["dark-mode", "responsive"]
+min_version = "0.100.0"
+
+[author]
+  name = "anti"

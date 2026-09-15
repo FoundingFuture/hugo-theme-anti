@@ -1,0 +1,15 @@
+{{ define "main" }}
+
+<div class="panel">
+  <div class="h3" style="margin-bottom:16px;">{{ .Title }}</div>
+  {{ with .Content }}<div class="body-copy" style="margin-bottom:20px;">{{ . }}</div>{{ end }}
+
+  <div class="prompt-line" style="margin-bottom:10px;"><span class="muted">$</span> ls {{ .Title | urlize }}</div>
+  <div style="display:flex;flex-direction:column;gap:6px;color:var(--c2);font-size:16px;">
+    {{ range .Pages }}
+      <div>drwxr-xr-x&nbsp;&nbsp;<a href="{{ .RelPermalink }}">{{ .Title }}</a></div>
+    {{ end }}
+  </div>
+</div>
+
+{{ end }}

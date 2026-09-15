@@ -1,0 +1,111 @@
+/* ===== anti-terminal Hugo theme ===== */
+
+:root{
+  --c1:#ffb000; --c2:#c98700; --c3:#e0a340; --c4:#8a6a2a; --c5:#a37728; --c7:#d4941f;
+  --glow-rgb:255,176,0;
+  --bg-page:#050705; --bg-panel:#080b08; --bg-chrome:#0a0f0a;
+  --border:#1c2a1c; --dot:#3a3a2a; --muted:#5a5540;
+  --on-active:#080b08;
+}
+:root[data-mode="green"]{
+  --c1:#33ff33; --c2:#29cc29; --c3:#5fdb5f; --c4:#1f8f1f; --c5:#248024; --c7:#2ee62e;
+  --glow-rgb:51,255,51;
+}
+:root[data-mode="light"]{
+  --c1:#1a1a18; --c2:#3a3a35; --c3:#45453f; --c4:#55554d; --c5:#66665c; --c7:#40403a;
+  --glow-rgb:0,0,0;
+  --bg-page:#e8e8e4; --bg-panel:#f2f2ee; --bg-chrome:#e0e0dc;
+  --border:#c8c8c2; --dot:#b0b0a8; --muted:#8a8a80;
+  --on-active:#f2f2ee;
+}
+
+html,body{margin:0;background:var(--bg-page);overflow-x:hidden;}
+body{font-family:'JetBrains Mono',monospace;}
+a{color:var(--c2);text-decoration:none;}
+a:hover{color:var(--c1);}
+
+.wrap{width:100%;max-width:1400px;margin:0 auto;box-sizing:border-box;}
+
+/* cursor */
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.cursor{display:inline-block;width:11px;height:1.1em;background:var(--c1);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite;}
+
+/* scanlines + noise + glitch */
+.scanlines-overlay{position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.25) 0px,rgba(0,0,0,0.25) 1px,transparent 1px,transparent 2px);mix-blend-mode:multiply;}
+.noise-layer{position:fixed;inset:0;pointer-events:none;z-index:49;mix-blend-mode:overlay;background-size:128px 128px;}
+@keyframes flicker1{0%,100%{opacity:0.25;}50%{opacity:0;}}
+@keyframes flicker2{0%,100%{opacity:0;}50%{opacity:0.25;}}
+@keyframes flicker3{0%,40%,100%{opacity:0;}70%{opacity:0.25;}}
+@keyframes flicker4{0%,60%,100%{opacity:0;}30%{opacity:0.25;}}
+.noise-layer:nth-child(1){animation:flicker1 0.6s steps(1) infinite;}
+.noise-layer:nth-child(2){animation:flicker2 0.7s steps(1) infinite;}
+.noise-layer:nth-child(3){animation:flicker3 0.5s steps(1) infinite;}
+.noise-layer:nth-child(4){animation:flicker4 0.9s steps(1) infinite;}
+
+@keyframes syncGlitch{
+  0%,100%{transform:translate(0,0) skewX(0deg);}
+  15%{transform:translate(-8px,0) skewX(-3deg);}
+  35%{transform:translate(6px,2px) skewX(2deg);}
+  55%{transform:translate(-3px,-1px) skewX(-1deg);}
+  75%{transform:translate(10px,0);}
+  90%{transform:translate(0,0);}
+}
+.glitch{animation:syncGlitch 0.42s steps(1) 1;}
+
+body.effects-scanlines-off .scanlines-overlay{display:none;}
+body.effects-noise-off .noise-layer{display:none;}
+
+/* rail */
+.rail{position:sticky;top:0;z-index:10;background:var(--bg-page);border-bottom:1px solid var(--border);display:flex;justify-content:center;}
+.rail-inner{padding:20px 64px;display:flex;align-items:center;gap:24px;}
+.logo{color:var(--c1);font-size:64px;font-weight:800;letter-spacing:-1px;text-shadow:0 0 6px rgba(var(--glow-rgb),0.55),0 0 14px rgba(var(--glow-rgb),0.3);white-space:nowrap;text-decoration:none;display:block;}
+.logo-block{display:flex;flex-direction:column;gap:4px;white-space:nowrap;}
+.stats{display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted);}
+.stats-row{display:flex;gap:14px;}
+.stats span.v{color:var(--c2);}
+
+.nav-window{flex:1;position:relative;min-width:260px;}
+.nav-chrome{position:relative;background:var(--bg-chrome);border-radius:6px 6px 0 0;padding:4px 14px;display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-bottom:none;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--dot);}
+.nav-body{position:relative;background:var(--bg-panel);border:1px solid var(--border);border-radius:0 0 6px 6px;padding:12px 18px;}
+.nav-prompt{color:var(--c2);}
+.nav-prompt .muted{color:var(--muted);}
+.nav-menu{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;}
+.nav-menu a{color:var(--c2);padding:1px 8px;}
+.nav-menu a:hover, .nav-menu a.active{background:var(--c1);color:var(--on-active);box-shadow:0 0 12px rgba(var(--glow-rgb),0.9),0 0 24px rgba(var(--glow-rgb),0.5);}
+.nav-menu a.active{box-shadow:none;}
+
+.settings-anchor{position:relative;display:inline-block;}
+.settings-panel{display:none;position:absolute;top:100%;right:0;margin-top:8px;z-index:60;background:var(--bg-chrome);border:1px solid var(--border);border-radius:6px;padding:12px 16px;font-size:18px;color:var(--c2);width:190px;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
+.settings-panel.open{display:block;}
+.settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.settings-head .muted, .settings-panel .muted{color:var(--muted);font-size:13px;}
+.settings-row{cursor:pointer;padding:2px 0;}
+.settings-row .mark{color:var(--c1);}
+.settings-divider{height:1px;background:var(--border);margin:8px 0;}
+
+/* content */
+.content-wrap{padding:40px 64px;box-sizing:border-box;display:flex;justify-content:center;}
+.panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:32px 36px;color:var(--c2);font-size:15px;}
+.panel + .panel{margin-top:24px;}
+.panel-divider{height:1px;background:var(--border);margin:8px 0;}
+
+.heading-block{display:flex;flex-direction:column;gap:14px;margin:8px 0;}
+.h1{color:var(--c1);font-size:60px;font-weight:700;text-shadow:0 0 5px rgba(var(--glow-rgb),0.5);}
+.h2{color:var(--c1);font-size:48px;font-weight:700;text-shadow:0 0 4px rgba(var(--glow-rgb),0.45);}
+.h3{color:var(--c3);font-size:40px;font-weight:600;text-shadow:0 0 3px rgba(var(--glow-rgb),0.35);}
+.h4{color:var(--c2);font-size:34px;font-weight:600;}
+.h5{color:var(--c5);font-size:30px;font-weight:500;}
+.h1 .muted, .h2 .muted, .h3 .muted, .h4 .muted, .h5 .muted{color:var(--muted);}
+
+.body-copy{color:var(--c7);font-size:16px;line-height:1.7;}
+.body-copy a{color:var(--c1);}
+.prompt-line{color:var(--c4);font-size:16px;}
+.prompt-line .muted{color:var(--muted);}
+
+@media (max-width:720px){
+  .rail-inner{flex-direction:column;align-items:flex-start;padding:20px 24px;}
+  .content-wrap{padding:24px;}
+  .logo{font-size:40px;}
+  .h1{font-size:36px;} .h2{font-size:30px;} .h3{font-size:26px;} .h4{font-size:22px;} .h5{font-size:19px;}
+}

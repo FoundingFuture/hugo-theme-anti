@@ -1,0 +1,43 @@
+baseURL = "https://example.com/"
+languageCode = "en-us"
+title = "anti"
+theme = "anti-terminal"
+
+[params]
+  shortName = "anti"
+  logoText = "!anti"
+  tagline = "anti — a systems language, compiled by antic"
+  subtitle = "C-rooted syntax, plus struct types that carry their own functions"
+  description = "anti is a small, C-rooted systems language compiled by antic."
+  footerText = "© 2026 anti-lang — built with Hugo + anti-terminal"
+  homeSections = ["page"]
+
+[[menu.main]]
+  name = "about"
+  url = "/about/"
+  weight = 10
+
+[[menu.main]]
+  name = "documentation"
+  url = "/documentation/"
+  weight = 20
+
+[[menu.main]]
+  name = "download"
+  url = "/download/"
+  weight = 30
+
+[[menu.main]]
+  name = "build"
+  url = "/build/"
+  weight = 40
+
+[[menu.main]]
+  name = "code"
+  url = "/code/"
+  weight = 50
+
+[[menu.main]]
+  name = "repositories"
+  url = "/repositories/"
+  weight = 60

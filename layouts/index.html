@@ -1,0 +1,33 @@
+{{ define "main" }}
+
+<div id="main" class="panel" data-glitch-target>
+  <div class="panel-divider"></div>
+
+  <div class="heading-block">
+    <div class="h1"><span class="muted">##</span> {{ .Site.Params.tagline | default .Title }}</div>
+    {{ with .Site.Params.subtitle }}<div class="h2"><span class="muted">###</span> {{ . }}</div>{{ end }}
+  </div>
+
+  <div class="panel-divider"></div>
+
+  {{ if .Content }}
+    <div class="body-copy">{{ .Content }}</div>
+  {{ else }}
+    <div class="prompt-line"><span class="muted">$</span> cat README | grep struct</div>
+    <div class="body-copy">anti compiles to native code via <span style="color:var(--c1);">antic</span>. C-rooted syntax, plus <span style="color:var(--c1);">struct</span> types that carry their own functions.</div>
+  {{ end }}
+
+  <div class="prompt-line" style="margin-top:6px;"><span class="muted">$</span> <span class="cursor"></span></div>
+</div>
+
+{{ range where .Site.RegularPages "Type" "in" (.Site.Params.homeSections | default (slice "page")) }}
+  {{ if ne .RelPermalink "/" }}
+    <div id="{{ .Slug }}" class="panel">
+      <div class="h3" style="margin-bottom:10px;">{{ .Title }}</div>
+      <div class="body-copy">{{ .Summary }}</div>
+      <div style="margin-top:12px;"><a href="{{ .RelPermalink }}">read more →</a></div>
+    </div>
+  {{ end }}
+{{ end }}
+
+{{ end }}

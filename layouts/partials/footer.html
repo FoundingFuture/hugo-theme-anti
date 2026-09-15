@@ -1,0 +1,4 @@
+<div class="wrap" style="padding:24px 64px 48px;box-sizing:border-box;color:var(--muted);font-size:13px;">
+  <div class="panel-divider" style="margin-bottom:16px;"></div>
+  {{ .Site.Params.footerText | default (printf "© %s %s" (now.Format "2006") .Site.Title) }}
+</div>
