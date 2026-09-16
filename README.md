@@ -9,17 +9,23 @@ A Hugo theme that draws the site as a CRT terminal. It has amber, green and ligh
 
 ## Installation
 
+Download `hugo-theme-anti-vX.Y.Z.zip` from the [releases page](https://github.com/FoundingFuture/hugo-theme-anti/releases) and unzip it inside your site's `themes/` folder:
+
 ```sh
-hugo new site mysite
 cd mysite
-git init
-git submodule add https://github.com/FoundingFuture/hugo-theme-anti.git themes/hugo-theme-anti
+unzip ~/Downloads/hugo-theme-anti-v0.0.1.zip -d themes/
 cp themes/hugo-theme-anti/exampleSite/hugo.toml .
 cp -r themes/hugo-theme-anti/exampleSite/content .
 hugo server
 ```
 
-The folder under `themes/` has to be named `hugo-theme-anti`, because Hugo finds a theme by its folder name.
+Hugo reads a theme from a directory, never from a zip file, and it finds the theme by that directory's name. The release zip holds one directory, `hugo-theme-anti`, so unzipping into `themes/` gives Hugo what it expects. Do not use GitHub's own "Source code" zip: it unpacks as `hugo-theme-anti-0.0.1`, a name Hugo does not match.
+
+As a Git submodule instead:
+
+```sh
+git submodule add https://github.com/FoundingFuture/hugo-theme-anti.git themes/hugo-theme-anti
+```
 
 ## Site configuration
 
@@ -88,9 +94,13 @@ When the system asks for reduced motion, the noise stops flickering, the cursor 
 ./c          # serve exampleSite at http://localhost:1313/ with live reload
 ./c build    # write the example site to dist/example-site/
 ./c check    # build the example site, a bare site and the fixtures, then run tools/check.py
+./d vX.Y.Z --dry-run   # everything a release does, then undo it and stop
+./d vX.Y.Z   # release: stamp, check, zip, commit, tag, push, publish
 ```
 
 `./c check` builds every site under the base path `/sub/`, with every Hugo warning treated as an error. `tools/check.py` then reads the output and prints PASS or FAIL for each check.
+
+`./d` stamps the version into `theme.toml` and the stylesheet before the checks run, so the gates read what will be tagged. It writes `dist/hugo-theme-anti-vX.Y.Z.zip`, checks it against `package.txt`, installs it into a throwaway site and builds that with plain `hugo`. Only then does it commit, tag, push and create the GitHub release. Any failure undoes the stamp and leaves no tag. The version needs a `## vX.Y.Z, YYYY-MM-DD` entry in `CHANGELOG.md`.
 
 ## Structure
 
@@ -112,6 +122,8 @@ When the system asks for reduced motion, the noise stops flickering, the cursor 
 | `static/favicon.svg`, `static/fonts/OFL.txt` | Icon, font licence |
 | `i18n/en.toml` | Words the templates print |
 | `c`, `tools/check.py` | Serve, build and check the example site |
+| `d`, `tools/zipcheck.py`, `package.txt` | Release: what ships, and the zip a reader installs |
+| `CHANGELOG.md` | One entry per release |
 | `tools/fixtures/sections/` | Content whose menu order and labels `tools/check.py` asserts |
 
 ## Fonts

@@ -38,6 +38,14 @@ The owner decided the menu comes from the top-level content directories, not fro
 - Order is weight first, then directory name. `func/sections.html` relies on `sort` being stable to break weight ties by name. The `alpha` and `mid` directories in `tools/fixtures/sections/` fail the check if it is not.
 - The home cards read the same partial, so the menu and the cards cannot disagree.
 
+## Releasing
+
+`./d vX.Y.Z` is the only way a release is made. Push the tag with the commits, which `--follow-tags` does, rather than leaving it on the machine.
+
+Hugo cannot read a zip. A site with `themes/hugo-theme-anti.zip` fails with `module "hugo-theme-anti" not found`, and the same site builds once the file is unzipped. So the archive carries one directory named `hugo-theme-anti`, and `./d` proves it by unzipping into a throwaway site and building with plain `hugo`. GitHub's generated source zip unpacks as `hugo-theme-anti-<version>`, which is why the release attaches its own.
+
+The version is stamped before the gates run, so the checks read the files as they will be tagged. Commit, tag and push happen last, and a failure restores the tree and leaves no tag.
+
 ## Phone layout
 
 Under 720px the header stops being sticky. Stacked, it measured 357px on an 844px-tall viewport. The settings panel also anchors to the menu window there, so it stays on screen wherever the menu wraps its button.

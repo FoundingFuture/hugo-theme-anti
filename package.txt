@@ -1,0 +1,32 @@
+# Every path at the root of this repository, in one of two lists.
+#
+#   ship  goes into the release zip, under hugo-theme-anti/
+#   keep  stays here
+#
+# ./d fails when a root path is in neither list. An include list fails
+# closed: something new is not shipped until somebody says it is.
+
+ship CHANGELOG.md
+ship LICENSE
+ship README.md
+ship archetypes
+ship assets
+ship go.mod
+ship hugo.toml
+ship i18n
+ship layouts
+ship static
+ship theme.toml
+
+# The demo site. A downloader copies its config and content to start a
+# site that looks like the screenshots.
+ship exampleSite
+
+keep .gitattributes
+keep .gitignore
+keep c
+keep d
+keep dist
+keep docs
+keep package.txt
+keep tools
