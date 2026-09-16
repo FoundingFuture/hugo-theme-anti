@@ -5,6 +5,7 @@ description = "A retro CRT-terminal theme. Amber, green or light phosphor, scanl
 homepage = "https://github.com/FoundingFuture/hugo-theme-anti"
 demosite = ""
 min_version = "0.158.0"
+version = "0.0.1"
 tags = ["dark", "light", "terminal", "retro", "documentation", "minimal", "responsive", "accessibility"]
 features = ["dark-mode", "light-mode", "self-hosted fonts", "no third-party requests", "reduced motion", "rss", "opengraph"]
 
